@@ -105,26 +105,30 @@ const VoiceRSS = {
   },
 };
 
-// function test() {
-//   VoiceRSS.speech({
-//     key: "684f61cbdba24164b47635a91f9f8e67",
-//     src: "Hello, world!",
-//     hl: "en-us",
-//     v: "Linda",
-//     r: 0,
-//     c: "mp3",
-//     f: "44khz_16bit_stereo",
-//     ssml: false,
-//   });
-// }
+//  Disable/Enable Button
+function toggleButton() {
+  button.disabled = !button.disabled;
+}
 
-// test();
+// Pasing Joke to VoiceRSS API
+function tellMe(joke) {
+  VoiceRSS.speech({
+    key: "684f61cbdba24164b47635a91f9f8e67",
+    src: joke,
+    hl: "de-at",
+    v: "Linda",
+    r: 0,
+    c: "mp3",
+    f: "44khz_16bit_stereo",
+    ssml: false,
+  });
+}
 
 // Get Jokes from Joke API
 async function getJokes() {
   let joke = "";
   const apiUrl =
-    "https://v2.jokeapi.dev/joke/Programming?lang=de&blacklistFlags=nsfw,religious,political,racist,sexist,explicit";
+    "https://v2.jokeapi.dev/joke/Any?lang=de&blacklistFlags=nsfw,religious,political,racist,sexist,explicit";
   try {
     const response = await fetch(apiUrl);
     const data = await response.json();
@@ -133,11 +137,16 @@ async function getJokes() {
     } else {
       joke = data.joke;
     }
-    console.log(joke);
+    // Text-to-Speech
+    tellMe(joke);
+    // Disable Button
+    toggleButton();
   } catch (error) {
     // Catch error here
     console.log("Attention", error);
   }
 }
 
-getJokes();
+// Event Listeners
+button.addEventListener("click", getJokes);
+audioElement.addEventListener("ended", toggleButton);
